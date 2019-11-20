@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <title>Edit <!--#var title_or_id--></title>
+  </head>
+  <body bgcolor="#FFFFFF" link="#000099" vlink="#555555" alink="#77003B">
+    <!--#var manage_tabs-->
+    <h2>
+       Edit Properties of <!--#var title_or_id-->
+    </h2>
+    <form action="manage_edit" method="post">
+      <table cellspacing="2" summary=''>
+        <tr>
+          <th align="left" valign="top">
+             Id 
+          </th>
+          <td align="left" valign="top">
+            <!--#var id-->
+          </td>
+        </tr>
+        <tr>
+          <th align="left" valign="top">
+            <em>Title</em>
+          </th>
+          <td align="left" valign="top">
+            <input type="text" name="title" size="50" value="<!--#var title-->" />
+          </td>
+        </tr>
+        <tr>
+          <th align="left" valign="top">
+             Columns 
+          </th>
+          <td align="left" valign="top">
+            <input type="text" name="columns" size="50" value="<!--#var cols_text-->" />
+          </td>
+        </tr>
+        <tr>
+          <td>
+          </td>
+          <td>
+            <br />
+            <input type="submit" value="Change" />
+          </td>
+        </tr>
+      </table>
+    </form>
+    <form action="manage_editData" method="post">
+      <table cellspacing="2" summary="">
+        <tr>
+          <td colspan=2>
+            <hr />
+          </td>
+        </tr>
+        <tr>
+          <th align="left" valign="top">
+             Data 
+          </th>
+          <td>
+            <textarea name="data:text" rows="30" cols="150"><!--#var data_text--></textarea>
+          </td>
+        </tr>
+        <tr>
+          <td>
+          </td>
+          <td>
+            <br />
+            <input type="submit" value="Change" />
+          </td>
+        </tr>
+      </table>
+    </form>
+  </body>
+</html>

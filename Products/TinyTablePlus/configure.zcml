@@ -1,0 +1,32 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:browser="http://namespaces.zope.org/browser"
+           xmlns:five="http://namespaces.zope.org/five"
+           i18n_domain="default"
+           >
+
+    <browser:resourceDirectory
+        name="tinytableplus"
+        directory="www"
+        />
+
+    <permission id="TinyTablePlus.add"
+                     title="Add TinyTablePlus"
+                     />
+
+    <browser:page
+        for="*"
+        name="add_tinytableplus_html"
+        template="zpt/add.zpt"
+        class=".TinyTablePlus.TinyTablePlusAddView"
+        permission="TinyTablePlus.add"
+        />
+
+    <five:registerClass
+        class=".TinyTablePlus.TinyTablePlus"
+        meta_type="TinyTablePlus"
+        addview="add_tinytableplus_html"
+        icon="tinytableplus/icon.gif"
+        permission="TinyTablePlus.add"
+        />
+
+</configure>

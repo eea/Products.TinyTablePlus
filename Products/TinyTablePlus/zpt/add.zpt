@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <title>Add TinyTablePlus</title>
+  </head>
+  <body bgcolor="#FFFFFF" link="#000099" vlink="#555555" alink="#77003B">
+    <h2>
+       Add TinyTablePlus 
+    </h2>
+    <form method="post">
+      <table cellspacing="2" summary=''>
+        <tr>
+          <th align="left" valign="top">
+             Id 
+          </th>
+          <td align="left" valign="top">
+            <input type="text" name="id" size="50" />
+          </td>
+        </tr>
+        <tr>
+          <th align="left" valign="top">
+            <em>Title</em>
+          </th>
+          <td align="left" valign="top">
+            <input type="text" name="title" size="50" />
+          </td>
+        </tr>
+        <tr>
+          <th align="left" valign="top">
+            <em>Column Names</em>
+          </th>
+          <td align="left" valign="top">
+            <input type="text" name="columns" size="50" value="name value" />
+          </td>
+        </tr>
+        <tr>
+          <td>
+          </td>
+          <td>
+            <br />
+            <input type="submit" name="submit_add" value="Add" />
+          </td>
+        </tr>
+      </table>
+    </form>
+  </body>
+</html>
