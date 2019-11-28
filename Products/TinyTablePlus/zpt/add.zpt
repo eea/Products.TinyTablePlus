@@ -7,7 +7,9 @@
     <h2>
        Add TinyTablePlus
     </h2>
-    <form method="post" action="add_tinytableplus_html">
+    <form method="post" action="add_tinytableplus_html
+    
+    ">
       <table cellspacing="2" summary=''>
         <tr>
           <th align="left" valign="top">
