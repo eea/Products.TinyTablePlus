@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-from __future__ import absolute_import
+
 __doc__='''Tiny Table data manager product'''
 __version__='$Revision: 1.29 $'[11:-2]
 
@@ -34,6 +34,7 @@ __version__='$Revision: 1.29 $'[11:-2]
 
 from six.moves import map
 from six.moves import range
+import logging
 from Persistence import Persistent
 from App.special_dtml import HTMLFile
 from App.Dialogs import MessageDialog
@@ -42,14 +43,16 @@ from Shared.DC.ZRDB.DA import getBrain
 from persistent.mapping import PersistentMapping
 from DateTime import DateTime
 import OFS.ObjectManager, OFS.SimpleItem, Acquisition, AccessControl.Role
-import Record, Missing, string
+import Record, Missing
 from . import ImportExport
 from Products.Five.browser import BrowserView
+
+logger = logging.getLogger('Products.TinyTablePlus')
 
 ######################### Folder Methods #########################
 
 class TinyTablePlusAddView(BrowserView):
-    """Add view for TinyTablePlus
+    """ Add view for TinyTablePlus
     """
 
     def __call__(self, id='', title='', columns='', submit_add=''):
@@ -99,8 +102,8 @@ def CoerceType(x, t):
                 x = str(x)
 
             try:
-                x = string.atoi(x)
-            except:
+                x = int(x)
+            except ValueError:
                 x = 0
         return x
     elif t == LongValued:
@@ -109,8 +112,8 @@ def CoerceType(x, t):
                 x = str(x)
 
             try:
-                x = string.atol(x)
-            except:
+                x = long(x)
+            except ValueError:
                 x = 0
         return x
     elif t == FloatValued:
@@ -119,15 +122,16 @@ def CoerceType(x, t):
                 x = str(x)
 
             try:
-                x = string.atof(x)
-            except:
+                x = float(x)
+            except ValueError:
                 x = 0.0
         return x
     elif t == DateTimeValued:
         if not (isinstance(x, object) and x.__class__ == DateTime):
             try:
                 x = DateTime(x)
-            except:
+            except Exception as err:
+                logger.error('DateTime error! %s' % str(err))
                 x = Missing.Value
         return x
     elif t == DateValued:
@@ -135,7 +139,8 @@ def CoerceType(x, t):
             try:
                 # force date-only
                 x = DateTime(x)
-            except:
+            except Exception as err:
+                logger.error('DateTime error! %s' % str(err))
                 x = Missing.Value
         return DateTime(x.Date())
     else:
@@ -149,7 +154,7 @@ class TinyTablePlus(
     Acquisition.Implicit,
     AccessControl.Role.RoleManager,
     ):
-    """TinyTablePlus is a product designed to manage a small amount of
+    """ TinyTablePlus is a product designed to manage a small amount of
 tabular data.  It's intended to fill the gap between a Z Table or an Z
 SQL Methods accessed SQL table, which are overkill for many tasks, and
 folder token properties, which allow only a single "column".  TinyTablePlus
@@ -366,6 +371,7 @@ TinyTablePlus Properties
 
     # Specify a relative URL for the icon used to display icons:
     icon = '++resource++tinytableplus/icon.gif'
+    zmi_icon = 'fa fa-table'
 
     # Specify definitions for tabs:
     manage_options=(
@@ -409,7 +415,7 @@ TinyTablePlus Properties
     # Provide interface for changing properties:
     manage_main=HTMLFile('Edit', globals())
     def manage_edit(self, title, columns, REQUEST=None):
-        """Change item properties
+        """ Change item properties
 
         Note that we return people to our own interface, not to
         the folder we were in before.
@@ -435,13 +441,15 @@ TinyTablePlus Properties
 
     manage_advancedForm = HTMLFile("Advanced", globals())
     def manage_advanced(self, class_name, class_file, REQUEST=None):
-        """Change Advanced Settings"""
+        """ Change Advanced Settings
+        """
         self.class_name_, self.class_file_ = class_name, class_file
         self._v_brain = getBrain(self.class_file_, self.class_name_, 1)
         return self.manage_editedDialog(REQUEST)
 
     def manage_editData(self, data, REQUEST=None):
-        """Change item data"""
+        """ Change item data
+        """
         newRows = ImportExport.ImportData(data)
         self._rows = list(map(self._FixRow, newRows))
 
@@ -454,13 +462,13 @@ TinyTablePlus Properties
         self._col_names = []
         self._types = []
         self._items = []
-        cols = string.split(column_list)
+        cols = str.split(column_list)
         # self._key_cols added to facilitate the setRows() method.
         self._key_cols = []
 
         for col in cols:
             item = PersistentMapping()
-            x = string.split(col, ':')
+            x = str.split(col, ':')
             # Addition by SDH for specification of key_cols.
             x0 = x[0]
             if x0[-1] == '*':
@@ -523,19 +531,20 @@ TinyTablePlus Properties
                 name = name + '*'
             l.append(name)
 
-        return string.join(l, ' ')
+        return " ".join(l)
         
     def data_text(self):
         return ImportExport.ExportData(self._rows)
 
     def index_html(self):
-        """Returns an HTML representation of the TinyTablePlus's data"""
+        """ Returns an HTML representation of the TinyTablePlus's data
+        """
 
         s = "<table border=1 summary=''><tr>\n<th>"
-        s = s + string.join(self._col_names, "</th>\n<th>") + "</th>\n</tr>\n"
+        s = s + "</th>\n<th>".join(self._col_names) + "</th>\n</tr>\n"
         for row in self._rows:
             s = s + "<tr>\n<td>" + \
-                string.join(list(map(str, row)), "</td>\n<td>") + "</td>\n</tr>\n"
+                "</td>\n<td>".join(list(map(str, row))) + "</td>\n</tr>\n"
         return s + "</table>"
 
     def _results(self, rows):
@@ -543,10 +552,9 @@ TinyTablePlus Properties
             brain = self._v_brain
         else:
             brain = self._v_brain = getBrain(self.class_file_, self.class_name_)
-        return Results((self._items, rows), brains=brain, parent=None)
+        return Results((self._items, rows))
 
     def __call__(self, *args, **kargs):
-        # print self.id, args, kargs.keys()
         if len(args) == 1:
             if args[0] in self._index:
                 return self._results([self._rows[self._index[args[0]]]])
@@ -569,8 +577,8 @@ TinyTablePlus Properties
     # The added methods by Shane Hathaway permit programatic
     # changes of the table contents.
     def delRows(self, *args, **kargs):
-        '''Returns the number of rows deleted.
-        '''
+        """ Returns the number of rows deleted.
+        """
         if len(args) == 1:
             if args[0] in self._index:
                 i = self._index[args[0]]
@@ -597,15 +605,15 @@ TinyTablePlus Properties
             return 0  # Don't default to deleting all rows.
 
     def delAllRows(self):
-        '''Deletes all rows.
-        '''
+        """ Deletes all rows.
+        """
         count = len(self._rows)
         del self._rows[:]
         return count
 
     def setRow(self, *args, **kw):
-        '''Adds or modifies one row.
-        '''
+        """ Adds or modifies one row.
+        """
         row = None
         willAdd = 0
         if hasattr(self, '_key_cols'):

@@ -25,13 +25,14 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-"""Import and Export data from TinyTablePlus to human readable CSV-type text"""
+""" Import and Export data from TinyTablePlus to human readable CSV-type text
+"""
 
-from __future__ import absolute_import
-import token, tokenize, Missing
 import six
 from six.moves import map
-from io import StringIO
+from six import BytesIO
+import token, tokenize, Missing
+
 
 class FormatError(Exception):
     pass
@@ -106,9 +107,9 @@ class ImportDataState(object):
                 self.rows.append(self.row)
                 self.row = []
 
-        elif t in (tokenize.COMMENT, tokenize.NL):
+        elif t in (token.ENCODING, tokenize.COMMENT, tokenize.NL):
             pass
-            
+
         else:
             raise FormatError(invtok)
 
@@ -119,9 +120,13 @@ def ImportData(s):
     if len(s) < 1:
         # Patch by Shane, April 2000 - Check for empty data set.
         return []
-    f = StringIO(s)
+    s = s.encode('utf-8')
+    f = BytesIO(s)
     i = ImportDataState()
-    tokenize.tokenize(f.readline, i.token)
+    token_gen = tokenize.tokenize(f.readline)
+    for t in token_gen:
+        i.token(t.type, t.string, t.start, t.end, t.line)
+
     return i.rows
 
 
