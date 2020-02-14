@@ -1,4 +1,4 @@
-0.9.1-1 (unreleased)
+1.0 (2020-02-14)
 --------------------------
 * Feature: added support for Python 3 and Plone 5.2
   [alecghica refs #110155]

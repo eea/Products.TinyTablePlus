@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 NAME = 'Products.TinyTablePlus'
-VERSION = '0.9.1-1'
+VERSION = '1.0'
 
 setup(name=NAME,
       version=VERSION,
