@@ -37,13 +37,12 @@ from six.moves import range
 import logging
 from Persistence import Persistent
 from App.special_dtml import HTMLFile
-from App.Dialogs import MessageDialog
 from Shared.DC.ZRDB.Results import Results
 from Shared.DC.ZRDB.DA import getBrain
 from persistent.mapping import PersistentMapping
 from DateTime import DateTime
 import OFS.ObjectManager, OFS.SimpleItem, Acquisition, AccessControl.Role
-import Record, Missing
+import Missing
 from . import ImportExport
 from Products.Five.browser import BrowserView
 
@@ -188,11 +187,11 @@ TinyTablePlus Properties
     excess will be trimmed.  If the row contains to few columns, columns
     containing NULL will be added.  String values in a column specified
     to take a number will be replaced by 0.
-    
+
     The form of values is similar to Python syntax. Strings are enclosed
     in single or double quotes, and backslash escapes are possible.
     Numbers may be entered just as in Python.  Full Python syntax for
-    floating point numbers is supported, including exponent notation. 
+    floating point numbers is supported, including exponent notation.
     Dates and Date-Times are represented by strings in any of the
     formats thet the Zope DateTime class understands.  Missing (NULL)
     may also be given as a value for a cell, by using 'NULL' or 'None',
@@ -205,7 +204,7 @@ TinyTablePlus Properties
     interface again, the text will be regenerated from the stored data.
     Comments, blank lines, line continuations, and such will all be lost
     since they don't alter the data itself.
-    
+
   Querying a TinyTablePlus
 
     Assume you have a table named MyTable. It has these properties:
@@ -221,7 +220,7 @@ TinyTablePlus Properties
       "smith", "bob", "z", 0, 0L
       "jones", "bob", "y", 0, 0L
       "jones", "john", "y", 0, 0L
-      "jones", "john", "z", 0, 0L 
+      "jones", "john", "z", 0, 0L
 
     The data can be queried from DTML in several ways:
 
@@ -274,7 +273,7 @@ TinyTablePlus Properties
         'y' will be returned.
 
       Shane's mods:
-      
+
         There are four new methods, a change in the specification
         of column names, and minor mods throughout.
         These changes make it possible to use
@@ -454,7 +453,7 @@ TinyTablePlus Properties
         self._rows = list(map(self._FixRow, newRows))
 
         self._GenerateIndex()
-        
+
         return self.manage_editedDialog(REQUEST)
 
     def _DigestColumns(self, column_list):
@@ -532,7 +531,7 @@ TinyTablePlus Properties
             l.append(name)
 
         return " ".join(l)
-        
+
     def data_text(self):
         return ImportExport.ExportData(self._rows)
 
@@ -552,6 +551,7 @@ TinyTablePlus Properties
             brain = self._v_brain
         else:
             brain = self._v_brain = getBrain(self.class_file_, self.class_name_)
+        logger.debug(brain)
         return Results((self._items, rows))
 
     def __call__(self, *args, **kargs):
@@ -662,8 +662,8 @@ TinyTablePlus Properties
             # Add a new row to the table.
             self._rows.append(row)
         self._GenerateIndex()
-                
-    
+
+
 ######################### Helper Classes #########################
 
 class RowFilter(object):

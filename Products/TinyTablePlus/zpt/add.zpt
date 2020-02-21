@@ -1,19 +1,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
+<html xmlns:i18n="http://xml.zope.org/namespaces/i18n" i18n:domain="Products.TinyTablePlus">
   <head>
-    <title>Add TinyTablePlus</title>
+    <title i18n:translate="">Add TinyTablePlus</title>
   </head>
   <body bgcolor="#FFFFFF" link="#000099" vlink="#555555" alink="#77003B">
-    <h2>
+    <h2 i18n:translate="">
        Add TinyTablePlus
     </h2>
-    <form method="post" action="add_tinytableplus_html
-    
-    ">
+    <form method="post" action="add_tinytableplus_html">
       <table cellspacing="2" summary=''>
         <tr>
-          <th align="left" valign="top">
-             Id 
+          <th align="left" valign="top" i18n:translate="">
+             Id
           </th>
           <td align="left" valign="top">
             <input type="text" name="id" size="50" />
@@ -21,7 +19,7 @@
         </tr>
         <tr>
           <th align="left" valign="top">
-            <em>Title</em>
+            <em i18n:translate="">Title</em>
           </th>
           <td align="left" valign="top">
             <input type="text" name="title" size="50" />
@@ -29,7 +27,7 @@
         </tr>
         <tr>
           <th align="left" valign="top">
-            <em>Column Names</em>
+            <em i18n:translate="">Column Names</em>
           </th>
           <td align="left" valign="top">
             <input type="text" name="columns" size="50" value="name value" />
@@ -40,7 +38,7 @@
           </td>
           <td>
             <br />
-            <input type="submit" name="submit_add" value="Add" />
+            <input type="submit" name="submit_add" value="Add" i18n:attributes="value" />
           </td>
         </tr>
       </table>
