@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.1
+1.1 (2020-02-21)
 --------------------------
 * Implemented automated release in Jenkins
 
