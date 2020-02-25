@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.2-dev0 - (unreleased)
+1.2 - (2020-02-25)
 ---------------------------
 * Feature: updated Jenkins pipeline
   [alecghica refs #110159]
