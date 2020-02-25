@@ -9,9 +9,9 @@ setup(name=NAME,
       version=VERSION,
       description="TinyTablePlus Product",
       long_description_content_type="text/x-rst",
-      long_description=open("README.rst").read() + "\n" +
-                       open("CHANGES.rst").read(),
-      # Get more strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
+      long_description=open("README.rst").read() 
+                       + "\n"
+                       + open("CHANGES.rst").read(),
       classifiers=[
         "Programming Language :: Python",
       ],
@@ -27,4 +27,4 @@ setup(name=NAME,
           'setuptools',
           'Products.ZSQLMethods',
       ],
-)
+     )

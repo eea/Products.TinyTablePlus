@@ -31,11 +31,14 @@
 import six
 from six.moves import map
 from six import BytesIO
-import token, tokenize, Missing
+import token
+import tokenize
+import Missing
 
 
 class FormatError(Exception):
     pass
+
 
 class ImportDataState(object):
     def __init__(self):
@@ -49,9 +52,9 @@ class ImportDataState(object):
         estr = "at line %d column %d" % src
         signerr = "Already have sign %s" % estr
         invtok = "invalid token %s %s" % (repr(s), estr)
-        
+
         if t == token.OP:
-            if  s == ',':
+            if s == ',':
                 self.row.append(self.value)
                 self.value = Missing.Value
                 self.seenvalue = self.sign = 0
@@ -62,7 +65,7 @@ class ImportDataState(object):
             elif s == '-':
                 if self.seenvalue or self.sign:
                     raise FormatError(signerr)
-                self.sign = -1                
+                self.sign = -1
             else:
                 raise FormatError(invtok)
 
@@ -86,14 +89,14 @@ class ImportDataState(object):
         elif t == token.STRING:
             if self.seenvalue or self.sign:
                 raise FormatError(invtok)
-            
+
             self.value = eval(s)
             self.seenvalue = 1
 
         elif t == token.NUMBER:
             if self.seenvalue:
                 raise FormatError(invtok)
-            
+
             self.value = eval(s)
             if self.sign < 0:
                 self.value = -self.value
@@ -132,18 +135,18 @@ def ImportData(s):
 
 # translate specialcharacter to escaped form
 cval = {
-    '\\'    :   '\\\\',
-    '\"'    :   '\\\"',
-    '\a'    :   '\\a',
-    '\b'    :   '\\b',
-    '\f'    :   '\\f',
-    '\n'    :   '\\n',
-    '\r'    :   '\\r',
-    '\t'    :   '\\t',
-    '\v'    :   '\\v'
+    '\\':'\\\\',
+    '\"':'\\\"',
+    '\a':'\\a',
+    '\b':'\\b',
+    '\f':'\\f',
+    '\n':'\\n',
+    '\r':'\\r',
+    '\t':'\\t',
+    '\v':'\\v'
 }
 
-    
+
 def ExportVal(data):
     if data is Missing.Value:
         return "NULL"
@@ -163,6 +166,7 @@ def ExportVal(data):
         return s + '"'
     else:
         return '"' + str(data) + '"'
+
 
 def ExportData(data):
     return '\n'.join(
