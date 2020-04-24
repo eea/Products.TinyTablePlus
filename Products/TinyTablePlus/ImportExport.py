@@ -135,15 +135,15 @@ def ImportData(s):
 
 # translate specialcharacter to escaped form
 cval = {
-    '\\':'\\\\',
-    '\"':'\\\"',
-    '\a':'\\a',
-    '\b':'\\b',
-    '\f':'\\f',
-    '\n':'\\n',
-    '\r':'\\r',
-    '\t':'\\t',
-    '\v':'\\v'
+    '\\': '\\\\',
+    '\"': '\\\"',
+    '\a': '\\a',
+    '\b': '\\b',
+    '\f': '\\f',
+    '\n': '\\n',
+    '\r': '\\r',
+    '\t': '\\t',
+    '\v': '\\v'
 }
 
 
@@ -170,7 +170,5 @@ def ExportVal(data):
 
 def ExportData(data):
     return '\n'.join(
-        [', '.join(
-                map(ExportVal, row)
-            ) for row in data]
+        [', '.join(map(ExportVal, row)) for row in data]
     )

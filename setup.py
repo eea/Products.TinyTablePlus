@@ -9,11 +9,10 @@ setup(name=NAME,
       version=VERSION,
       description="TinyTablePlus Product",
       long_description_content_type="text/x-rst",
-      long_description=open("README.rst").read()
-                       + "\n"
-                       + open(join("docs", "HISTORY.txt")).read(),
+      long_description=open("README.rst").read() + "\n" + open(join(
+          "docs", "HISTORY.txt")).read(),
       classifiers=[
-        "Programming Language :: Python",
+          "Programming Language :: Python",
       ],
       keywords='',
       author='Ty Sarna, fork of Eau De Web',
@@ -27,4 +26,4 @@ setup(name=NAME,
           'setuptools',
           'Products.ZSQLMethods',
       ],
-     )
+      )

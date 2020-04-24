@@ -27,11 +27,6 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-__doc__='''Tiny Table data manager product'''
-__version__='$Revision: 1.29 $'[11:-2]
-
-######################### Imported Modules #########################
-
 from six.moves import map
 from six.moves import range
 import logging
@@ -41,14 +36,20 @@ from Shared.DC.ZRDB.Results import Results
 from Shared.DC.ZRDB.DA import getBrain
 from persistent.mapping import PersistentMapping
 from DateTime import DateTime
-import OFS.ObjectManager, OFS.SimpleItem, Acquisition, AccessControl.Role
+import OFS.ObjectManager
+import OFS.SimpleItem
+import Acquisition
+import AccessControl.Role
 import Missing
 from . import ImportExport
 from Products.Five.browser import BrowserView
 
 logger = logging.getLogger('Products.TinyTablePlus')
 
-######################### Folder Methods #########################
+
+__doc__ = '''Tiny Table data manager product'''
+__version__ = '$Revision: 1.29 $'[11:-2]
+
 
 class TinyTablePlusAddView(BrowserView):
     """ Add view for TinyTablePlus
@@ -59,12 +60,12 @@ class TinyTablePlusAddView(BrowserView):
             obj = TinyTablePlus(id, title, columns)
             parent = self.context.aq_parent
             parent._setObject(id, obj)
-            self.request.RESPONSE.redirect(parent.absolute_url()+'/manage_main')
+            self.request.RESPONSE.redirect(
+                parent.absolute_url() + '/manage_main')
             return ''
         else:
             return self.index()
 
-######################### Helper Functions #########################
 
 IntValued = 'i'
 LongValued = 'l'
@@ -74,13 +75,14 @@ DateTimeValued = 'd'
 DateValued = 'D'
 
 TypeNames = {
-    IntValued : ':int',
-    LongValued : ':long',
-    FloatValued : ':float',
-    StringValued : '',
-    DateTimeValued : ':datetime',
-    DateValued : ':date'
+    IntValued: ':int',
+    LongValued: ':long',
+    FloatValued: ':float',
+    StringValued: '',
+    DateTimeValued: ':datetime',
+    DateValued: ':date'
 }
+
 
 def TypeCode(t):
     if t == LongValued:
@@ -90,14 +92,15 @@ def TypeCode(t):
     else:
         return t
 
+
 def CoerceType(x, t):
     if x is Missing.Value:
         return x
     elif t == IntValued:
-        if type(x) == type(0.0):
+        if isinstance(x, float):
             return int(x)
-        if type(x) != type(0):
-            if (type(x) != type('')):
+        if not isinstance(x, int):
+            if not isinstance(x, str):
                 x = str(x)
 
             try:
@@ -106,8 +109,8 @@ def CoerceType(x, t):
                 x = 0
         return x
     elif t == LongValued:
-        if type(x) != type(0):
-            if (type(x) != type('')):
+        if not isinstance(x, int):
+            if not isinstance(x, str):
                 x = str(x)
 
             try:
@@ -116,8 +119,8 @@ def CoerceType(x, t):
                 x = 0
         return x
     elif t == FloatValued:
-        if type(x) != type(0.0):
-            if (type(x) != type('')):
+        if not isinstance(x, float):
+            if not isinstance(x, str):
                 x = str(x)
 
             try:
@@ -145,14 +148,13 @@ def CoerceType(x, t):
     else:
         return str(x)
 
-######################### TinyTablePlus Class #########################
 
 class TinyTablePlus(
     OFS.SimpleItem.Item,
     Persistent,
     Acquisition.Implicit,
     AccessControl.Role.RoleManager,
-    ):
+):
     """ TinyTablePlus is a product designed to manage a small amount of
 tabular data.  It's intended to fill the gap between a Z Table or an Z
 SQL Methods accessed SQL table, which are overkill for many tasks, and
@@ -373,25 +375,25 @@ TinyTablePlus Properties
     zmi_icon = 'fa fa-table'
 
     # Specify definitions for tabs:
-    manage_options=(
-        {"label":"Properties",  "action":"manage_main"},
-        {"label":"Advanced",    "action":"manage_advancedForm"},
-        {"label":"View",        "action":"manage_view"},
-        {"label":"Security",    "action":"manage_access"},
-        {"label":"About",       "action":"manage_about"},
-        )
+    manage_options = (
+        {"label": "Properties",  "action": "manage_main"},
+        {"label": "Advanced",    "action": "manage_advancedForm"},
+        {"label": "View",        "action": "manage_view"},
+        {"label": "Security",    "action": "manage_access"},
+        {"label": "About",       "action": "manage_about"},
+    )
 
     # Specify how individual operations add up to "permissions":
-    __ac_permissions__=(
-        ('View management screens', ('manage_tabs','manage_main',
-                                     'manage_about','manage_advancedForm')),
-        ('Change permissions',      ('manage_access',)           ),
-        ('Change TinyTable',        ('manage_edit','manage_editData',
+    __ac_permissions__ = (
+        ('View management screens', ('manage_tabs', 'manage_main',
+                                     'manage_about', 'manage_advancedForm')),
+        ('Change permissions',      ('manage_access',)),
+        ('Change TinyTable',        ('manage_edit', 'manage_editData',
                                      'manage_advanced',
                                      # Added by Shane:
-                                     'delRows','delAllRows','setRow',)),
-        ('Query TinyTable Data',    ('','index_html','manage_view','getRows')),
-        )
+                                     'delRows', 'delAllRows', 'setRow',)),
+        ('Query TinyTable Data', ('', 'index_html', 'manage_view', 'getRows')),
+    )
 
     def __init__(self, id, title='', columns=''):
         self.id = id
@@ -412,7 +414,8 @@ TinyTablePlus Properties
     manage_about = HTMLFile("About", globals())
 
     # Provide interface for changing properties:
-    manage_main=HTMLFile('Edit', globals())
+    manage_main = HTMLFile('Edit', globals())
+
     def manage_edit(self, title, columns, REQUEST=None):
         """ Change item properties
 
@@ -439,6 +442,7 @@ TinyTablePlus Properties
         self._dataver = 1
 
     manage_advancedForm = HTMLFile("Advanced", globals())
+
     def manage_advanced(self, class_name, class_file, REQUEST=None):
         """ Change Advanced Settings
         """
@@ -550,7 +554,8 @@ TinyTablePlus Properties
         if hasattr(self, '_v_brain'):
             brain = self._v_brain
         else:
-            brain = self._v_brain = getBrain(self.class_file_, self.class_name_)
+            brain = self._v_brain = getBrain(self.class_file_,
+                                             self.class_name_)
         logger.debug(brain)
         return Results((self._items, rows))
 
@@ -663,8 +668,6 @@ TinyTablePlus Properties
             self._rows.append(row)
         self._GenerateIndex()
 
-
-######################### Helper Classes #########################
 
 class RowFilter(object):
     def __init__(self, table, rules):
