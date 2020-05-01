@@ -1,3 +1,5 @@
+# pylint: disable=eval-used,too-many-statements,too-many-branches
+# pylint: disable=too-many-arguments,assignment-from-no-return
 # Copyright (c) 1998-1999 Endicor Technologies, Inc.
 # All rights reserved. Written by Ty Sarna <tsarna@endicor.com>
 # Modified by Shane Hathaway. (April 2000)
@@ -28,19 +30,23 @@
 """ Import and Export data from TinyTablePlus to human readable CSV-type text
 """
 
+import token
+import tokenize
 import six
 from six.moves import map
 from six import BytesIO
-import token
-import tokenize
 import Missing
 
 
 class FormatError(Exception):
+    """FormatError."""
+
     pass
 
 
 class ImportDataState(object):
+    """ImportDataState."""
+
     def __init__(self):
         self.rows = []
         self.row = []
@@ -49,6 +55,14 @@ class ImportDataState(object):
         self.lasttok = tokenize.ENDMARKER
 
     def token(self, t, s, src, erc, l):
+        """token.
+
+        :param t:
+        :param s:
+        :param src:
+        :param erc:
+        :param l:
+        """
         estr = "at line %d column %d" % src
         signerr = "Already have sign %s" % estr
         invtok = "invalid token %s %s" % (repr(s), estr)
@@ -120,6 +134,10 @@ class ImportDataState(object):
 
 
 def ImportData(s):
+    """ImportData.
+
+    :param s:
+    """
     if len(s) < 1:
         # Patch by Shane, April 2000 - Check for empty data set.
         return []
@@ -148,6 +166,10 @@ cval = {
 
 
 def ExportVal(data):
+    """ExportVal.
+
+    :param data:
+    """
     if data is Missing.Value:
         return "NULL"
     elif data is Missing.Value:
@@ -164,11 +186,14 @@ def ExportVal(data):
             else:
                 s = s + c
         return s + '"'
-    else:
-        return '"' + str(data) + '"'
+    return '"' + str(data) + '"'
 
 
 def ExportData(data):
+    """ExportData.
+
+    :param data:
+    """
     return '\n'.join(
         [', '.join(map(ExportVal, row)) for row in data]
     )

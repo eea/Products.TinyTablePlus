@@ -25,6 +25,8 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
+"""TinyTablePlus initialization"""
+# pylint: disable=redefined-builtin
 __doc__ = """TinyTablePlus initialization"""
 
 __version__ = "$Revision: 1.5 $"[11:-2]

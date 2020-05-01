@@ -1,3 +1,5 @@
+''' Tiny Table Plus '''
+# pylint: disable=too-many-branches,too-many-return-statements
 # Copyright (c) 1998-1999 Endicor Technologies, Inc.
 # All rights reserved. Written by Ty Sarna <tsarna@endicor.com>
 #
@@ -27,9 +29,9 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
+import logging
 from six.moves import map
 from six.moves import range
-import logging
 from Persistence import Persistent
 from App.special_dtml import HTMLFile
 from Shared.DC.ZRDB.Results import Results
@@ -41,16 +43,19 @@ import OFS.SimpleItem
 import Acquisition
 import AccessControl.Role
 import Missing
-from . import ImportExport
 from Products.Five.browser import BrowserView
+
+from . import ImportExport
 
 logger = logging.getLogger('Products.TinyTablePlus')
 
 
+# pylint: disable=redefined-builtin
 __doc__ = '''Tiny Table data manager product'''
 __version__ = '$Revision: 1.29 $'[11:-2]
 
 
+# pylint: disable=redefined-builtin
 class TinyTablePlusAddView(BrowserView):
     """ Add view for TinyTablePlus
     """
@@ -63,8 +68,7 @@ class TinyTablePlusAddView(BrowserView):
             self.request.RESPONSE.redirect(
                 parent.absolute_url() + '/manage_main')
             return ''
-        else:
-            return self.index()
+        return self.index()
 
 
 IntValued = 'i'
@@ -85,15 +89,23 @@ TypeNames = {
 
 
 def TypeCode(t):
+    """TypeCode.
+
+    :param t:
+    """
     if t == LongValued:
         return 'i'
     elif t == DateValued:
         return 'd'
-    else:
-        return t
+    return t
 
 
 def CoerceType(x, t):
+    """CoerceType.
+
+    :param x:
+    :param t:
+    """
     if x is Missing.Value:
         return x
     elif t == IntValued:
@@ -133,7 +145,7 @@ def CoerceType(x, t):
             try:
                 x = DateTime(x)
             except Exception as err:
-                logger.error('DateTime error! %s' % str(err))
+                logger.error('DateTime error! %s', str(err))
                 x = Missing.Value
         return x
     elif t == DateValued:
@@ -142,13 +154,14 @@ def CoerceType(x, t):
                 # force date-only
                 x = DateTime(x)
             except Exception as err:
-                logger.error('DateTime error! %s' % str(err))
+                logger.error('DateTime error! %s', str(err))
                 x = Missing.Value
         return DateTime(x.Date())
     else:
         return str(x)
 
 
+# pylint: disable=too-many-instance-attributes
 class TinyTablePlus(
     OFS.SimpleItem.Item,
     Persistent,
@@ -376,22 +389,22 @@ TinyTablePlus Properties
 
     # Specify definitions for tabs:
     manage_options = (
-        {"label": "Properties",  "action": "manage_main"},
-        {"label": "Advanced",    "action": "manage_advancedForm"},
-        {"label": "View",        "action": "manage_view"},
-        {"label": "Security",    "action": "manage_access"},
-        {"label": "About",       "action": "manage_about"},
+        {"label": "Properties", "action": "manage_main"},
+        {"label": "Advanced", "action": "manage_advancedForm"},
+        {"label": "View", "action": "manage_view"},
+        {"label": "Security", "action": "manage_access"},
+        {"label": "About", "action": "manage_about"},
     )
 
     # Specify how individual operations add up to "permissions":
     __ac_permissions__ = (
         ('View management screens', ('manage_tabs', 'manage_main',
                                      'manage_about', 'manage_advancedForm')),
-        ('Change permissions',      ('manage_access',)),
-        ('Change TinyTable',        ('manage_edit', 'manage_editData',
-                                     'manage_advanced',
-                                     # Added by Shane:
-                                     'delRows', 'delAllRows', 'setRow',)),
+        ('Change permissions', ('manage_access',)),
+        ('Change TinyTable', ('manage_edit', 'manage_editData',
+                              'manage_advanced',
+                              # Added by Shane:
+                              'delRows', 'delAllRows', 'setRow',)),
         ('Query TinyTable Data', ('', 'index_html', 'manage_view', 'getRows')),
     )
 
@@ -433,6 +446,11 @@ TinyTablePlus Properties
         return self.manage_editedDialog(REQUEST)
 
     def _SetState(self, title, columns):
+        """_SetState.
+
+        :param title:
+        :param columns:
+        """
         self.title = title
 
         if self._dataver < 1:
@@ -461,6 +479,10 @@ TinyTablePlus Properties
         return self.manage_editedDialog(REQUEST)
 
     def _DigestColumns(self, column_list):
+        """_DigestColumns.
+
+        :param column_list:
+        """
         self._col_index = PersistentMapping()
         self._col_names = []
         self._types = []
@@ -505,6 +527,10 @@ TinyTablePlus Properties
             col_num = col_num + 1
 
     def _FixRow(self, row):
+        """_FixRow.
+
+        :param row:
+        """
         # force row to match specified number of columns
         if len(row) > self.n_cols:
             row = row[:self.n_cols]
@@ -519,24 +545,27 @@ TinyTablePlus Properties
         return newrow
 
     def _GenerateIndex(self):
+        """_GenerateIndex."""
         index = PersistentMapping()
         for i in range(0, len(self._rows)):
             index[self._rows[i][0]] = i
         self._index = index
 
     def cols_text(self):
-        l = []
+        """cols_text."""
+        cols = []
 
         for i in range(0, self.n_cols):
             # Modified by SDH for key_cols.
             name = self._col_names[i] + TypeNames[self._types[i]]
             if hasattr(self, '_key_cols') and name in self._key_cols:
                 name = name + '*'
-            l.append(name)
+            cols.append(name)
 
-        return " ".join(l)
+        return " ".join(cols)
 
     def data_text(self):
+        """data_text."""
         return ImportExport.ExportData(self._rows)
 
     def index_html(self):
@@ -551,6 +580,10 @@ TinyTablePlus Properties
         return s + "</table>"
 
     def _results(self, rows):
+        """_results.
+
+        :param rows:
+        """
         if hasattr(self, '_v_brain'):
             brain = self._v_brain
         else:
@@ -563,16 +596,15 @@ TinyTablePlus Properties
         if len(args) == 1:
             if args[0] in self._index:
                 return self._results([self._rows[self._index[args[0]]]])
-            else:
-                return None
-        elif len(kargs):
+            return None
+        elif kargs:
             rf = RowFilter(self, kargs)
-            l = []
+            res = []
 
             for i in range(0, len(self._rows)):
                 if rf(self._rows[i]):
-                    l.append(self._rows[i])
-            return self._results(l)
+                    res.append(self._rows[i])
+            return self._results(res)
         else:
             return self._results(self._rows)
 
@@ -593,7 +625,7 @@ TinyTablePlus Properties
                     return 1
             else:
                 return 0
-        elif len(kargs):
+        elif kargs:
             rf = RowFilter(self, kargs)
             count = 0
 
@@ -623,7 +655,7 @@ TinyTablePlus Properties
         willAdd = 0
         if hasattr(self, '_key_cols'):
             key_cols = self._key_cols
-            if len(key_cols) > 0:
+            if key_cols:
                 # If key_cols is specified, we will try to
                 # modify a record that matches the values of
                 # the key columns.
@@ -670,6 +702,8 @@ TinyTablePlus Properties
 
 
 class RowFilter(object):
+    """RowFilter."""
+
     def __init__(self, table, rules):
         self.cols = []
         self.vals = []
